@@ -1,0 +1,18 @@
+Title: RAG Architecture Patterns for Production AI Systems
+Source: AI Content Studio Knowledge Base
+
+Retrieval Augmented Generation (RAG) has evolved significantly since its introduction by Meta AI Research in 2020. The core insight remains: instead of relying solely on a language model's parametric knowledge (what it memorized during training), RAG retrieves relevant documents at inference time and includes them in the prompt context. This grounds the model's response in specific, verifiable facts.
+
+The standard RAG pipeline has three stages: Indexing, Retrieval, and Generation. During indexing, documents are split into chunks, embedded into vector space, and stored in a vector database. During retrieval, the user's query is embedded and similar chunks are found via approximate nearest neighbor search. During generation, the retrieved chunks are inserted into the LLM's prompt as context.
+
+Naive RAG (single-vector retrieval) suffers from several failure modes. The most common is the "lost in the middle" problem — when retrieved context is too long, LLMs tend to ignore information in the middle of the context window, focusing only on the beginning and end. Research by Stanford and UC Berkeley demonstrated that recall drops by up to 60% for information placed in the middle of long contexts.
+
+Advanced RAG addresses these failures through hybrid retrieval (combining dense embeddings with sparse keyword search), reranking (using cross-encoders to re-score initial retrieval results), and query transformation (rewriting the user's query for better retrieval). Production systems at companies like Notion, Perplexity, and Glean use all three techniques.
+
+Chunking strategy has a direct impact on retrieval quality. Chunks that are too small lose context; chunks that are too large include irrelevant information that dilutes the relevant content. The industry consensus is 256-512 tokens with 10-20% overlap for general-purpose text. For structured documents like code or legal text, semantic chunking (splitting on logical boundaries) outperforms fixed-size chunking.
+
+Embedding model selection involves a quality-speed-cost tradeoff. Models like all-MiniLM-L6-v2 (384 dimensions) are fast and free to run locally. OpenAI's text-embedding-3-large (3072 dimensions) offers higher quality but requires API calls and costs $0.13 per million tokens. For most applications, the smaller local model provides 90% of the quality at zero marginal cost.
+
+The reranking step is the single highest-impact improvement to a naive RAG pipeline. Initial retrieval (whether dense or sparse) uses bi-encoders that embed the query and document separately — fast but imprecise. A cross-encoder reranker sees the query and document together, producing much more accurate relevance scores. Studies show reranking improves answer quality by 15-25% with minimal latency overhead (50-100ms for 20 candidates).
+
+Multi-agent RAG architectures use specialized agents for different stages: a query planning agent that generates multiple search queries, a retrieval agent that searches across multiple sources, a synthesis agent that combines results, and a critique agent that evaluates the quality of the generated answer. This separation of concerns produces more reliable outputs than monolithic pipelines.

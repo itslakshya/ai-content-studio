@@ -1,0 +1,18 @@
+Title: LangGraph and Multi-Agent System Design Patterns
+Source: AI Content Studio Knowledge Base
+
+LangGraph is a framework for building stateful, multi-actor applications with LLMs, developed by the LangChain team. Unlike LangChain's sequential chains, LangGraph supports cycles, conditional branching, and persistent state — enabling agent architectures that can reason, retry, and self-correct.
+
+The core abstraction in LangGraph is the StateGraph. Each node in the graph is a function that reads and writes to a shared state object. Edges define the flow between nodes, and conditional edges enable routing based on runtime values. The state is a TypedDict with optional reducer functions (like operator.add) that define how each field is updated when multiple nodes write to it.
+
+The Supervisor pattern is the most common multi-agent architecture in LangGraph. A supervisor agent acts as the orchestrator, deciding which specialist agent to invoke next based on the current state. This is simpler than a fully decentralized multi-agent system and provides better control over execution flow. The supervisor can implement retry logic, error handling, and human-in-the-loop checkpoints.
+
+State reducers in LangGraph solve the "state merge" problem. When a node returns a partial state update, LangGraph needs to know how to merge it with the existing state. For simple values (strings, numbers), last-write-wins is the default. For aggregation (token counts, metrics), operator.add accumulates values across nodes. For message history, the add_messages reducer appends new messages while deduplicating by ID.
+
+Critique-Rewrite loops are a powerful pattern enabled by LangGraph's cycle support. A critique agent evaluates the output, and if it falls below a quality threshold, the state is routed back to a rewrite agent for improvement. This loop continues until the quality threshold is met or a maximum retry count is reached. This pattern is impossible in sequential chain frameworks.
+
+Human-in-the-Loop (HITL) integration in LangGraph uses interrupt_before or interrupt_after to pause graph execution at specified nodes. The graph state is persisted to a checkpoint store, allowing the human to review, edit, and resume the pipeline later. This enables production workflows where AI generates a draft and a human approves the final version.
+
+Checkpointing in LangGraph provides fault tolerance. If a graph execution fails mid-pipeline, it can be resumed from the last successful checkpoint rather than starting over. LangGraph supports SQLite, PostgreSQL, and custom checkpoint backends. For production systems, PostgreSQL checkpointing enables distributed execution across multiple workers.
+
+Token tracking across multi-agent graphs requires careful design. Each LLM call returns usage metadata (input_tokens, output_tokens), but these need to be accumulated across multiple agents. The operator.add reducer pattern handles this elegantly: each node adds its token count to the shared state, and LangGraph automatically sums them. This gives exact per-run cost tracking.

@@ -1,0 +1,16 @@
+Title: Sports Analytics, Technology in Sports, and the Business of Athletics
+Source: AI Content Studio Knowledge Base
+
+The global sports industry is valued at $620 billion in 2024, with sports analytics representing a $4.6 billion market growing at 22% annually. Data-driven decision making has transformed every major sport. The Oakland Athletics' "Moneyball" approach in 2002 was the starting point; today, every Premier League, NBA, and IPL team employs full-time data science teams.
+
+Cricket analytics in the IPL (Indian Premier League) has become highly sophisticated. Player valuations are modeled using expected runs, strike rate under pressure, bowling economy in death overs, and fielding run-saving metrics. The IPL's media rights were sold for $6.2 billion for a 5-year cycle, making it the second most valuable sports league per match after the NFL. Analytics firms like CricViz and ESPNcricinfo's Smart Stats provide real-time performance metrics that influence team strategy and auction bidding.
+
+Football (soccer) analytics use Expected Goals (xG) as the primary metric. xG models use machine learning trained on hundreds of thousands of shots, incorporating variables like shot distance, angle, body part, assist type, and defensive pressure. Liverpool FC's data-driven recruitment under sporting director Michael Edwards, guided by analytics company StatsBomb, is credited with identifying undervalued players that contributed to their Champions League and Premier League victories.
+
+The NBA has been transformed by spatial tracking technology. The league's Second Spectrum partnership provides 25 frames-per-second tracking of every player and the ball, generating 70 terabytes of data per season. AI models predict shot probability, defensive coverage quality, and player fatigue in real-time. This data is available to teams, broadcasters, and through the NBA's stats API, making basketball one of the most analytically transparent sports.
+
+Wearable technology in sports monitors athlete biometrics including heart rate, acceleration, deceleration, and sleep quality. FIFA approved goal-line technology in 2012 and semi-automated offside technology (using AI-powered limb tracking) in 2022. The technology uses 12 cameras per stadium tracking 29 body points per player at 50 times per second. Rugby, cricket, and tennis use similar AI-powered officiating tools.
+
+Esports viewership surpassed several traditional sports in 2024. The League of Legends World Championship attracted 73 million concurrent viewers. Esports organizations like T1, Team Liquid, and Fnatic operate with professional coaching staff, analysts, psychologists, and training facilities comparable to traditional sports. The average professional esports player earns $300,000-$500,000 annually, with top players exceeding $5 million including sponsorships.
+
+Fantasy sports and sports betting have merged with analytics. In India, Dream11 has 200 million users and is valued at $8 billion. The platform uses predictive models to suggest lineups and educate users on player statistics. Globally, the online sports betting market is valued at $76 billion, with AI-powered odds calculation and real-time in-play betting driving growth.

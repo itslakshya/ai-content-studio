@@ -1,0 +1,16 @@
+Title: Observability and Monitoring for Production AI/ML Systems
+Source: AI Content Studio Knowledge Base
+
+Observability in AI systems goes beyond traditional application monitoring. While conventional observability focuses on latency, error rates, and throughput, AI systems also need to track model-specific metrics: token usage, generation quality, hallucination rates, cache efficiency, and per-agent performance in multi-agent architectures.
+
+Token tracking is critical for cost management in LLM applications. At $0.59 per million tokens for models like Llama 3.3 70B, and $15 per million tokens for GPT-4, accurate token counting directly impacts profitability. Production systems should capture tokens at the individual LLM call level, aggregate per-agent, and roll up to per-request totals. Most LLM APIs return usage metadata with each response — capturing and persisting this data enables accurate cost analysis.
+
+Latency breakdown by agent reveals optimization opportunities. In a typical multi-agent content pipeline: web search takes 3-8 seconds, LLM research compilation 3-5 seconds, critique 1-2 seconds, and content formatting 15-30 seconds (5 sequential LLM calls). The format agent dominates latency because it makes 5 independent LLM calls sequentially. Parallelizing these calls with asyncio.gather can reduce format latency by 3-4x.
+
+Quality metrics for AI-generated content include critique scores (automated quality assessment by another LLM), factual accuracy (verified against source documents), and readability scores (Flesch-Kincaid, Dale-Chall). Tracking these over time reveals quality trends: is the system improving, degrading, or stable? Sudden drops often indicate changes in the underlying LLM model or degraded retrieval quality.
+
+Cache monitoring measures the effectiveness of semantic caching. Key metrics include cache hit rate (percentage of requests served from cache), cache size (number of stored entries vs maximum), similarity threshold accuracy (are cache hits actually returning relevant results?), and cold-start frequency (how often the cache is empty after restarts). A well-tuned semantic cache should achieve 20-40% hit rate in production, saving significant LLM costs and reducing latency by 50x for cached queries.
+
+Database-backed persistence for observability data ensures metrics survive server restarts. SQLite with WAL (Write-Ahead Logging) mode provides ACID compliance with excellent write performance. The WAL journal allows concurrent reads during writes, which is critical when the observability dashboard queries metrics while the pipeline is running. For high-throughput production systems, PostgreSQL or ClickHouse provide better concurrent write performance.
+
+Alerting thresholds for AI systems differ from traditional applications. Beyond standard error rate alerts, AI-specific alerts include: critique score dropping below threshold (indicating quality degradation), token usage exceeding daily budget, cache hit rate dropping (indicating topic diversity increase or cache invalidation issues), and latency exceeding SLA (often caused by LLM provider rate limits or outages).

@@ -1,0 +1,32 @@
+Title: Content Marketing Best Practices for LinkedIn, Twitter, and Blogs
+Source: AI Content Studio Knowledge Base
+
+LinkedIn Content Strategy:
+LinkedIn posts that perform best follow a specific structure. The first line (the hook) must create enough curiosity to make the reader click "see more". Effective hooks use pattern interrupts — surprising statistics, counterintuitive statements, or direct challenges to conventional wisdom. LinkedIn's algorithm rewards posts that generate dwell time (people reading the full post) and meaningful comments over mere likes.
+
+The optimal LinkedIn post length is 1,200-1,600 characters. Posts should use short paragraphs (1-3 lines maximum) with white space between them, as this improves mobile readability. Bullet points with emoji markers (→, ✅, 🔥) increase scroll-stopping power. Always end with a clear call-to-action or a question to drive comments.
+
+LinkedIn posts about personal experience, lessons learned, and professional failures consistently outperform purely informational content. The platform rewards authenticity. Hashtags (3-5 maximum) should be specific rather than generic — #AIEngineering outperforms #AI.
+
+Twitter/X Thread Strategy:
+Twitter threads outperform single tweets by 5-10x in impressions. The first tweet in a thread must be complete and compelling on its own — many users will see only this tweet in their feed. Use numbers in the first tweet ("7 things I learned building an AI system") as they signal value and completeness.
+
+Each tweet in a thread should be self-contained but create anticipation for the next. End tweets with "→" or "(thread)" or a numbered indicator like "2/7" to signal continuation. Threads between 5-12 tweets perform best. Beyond 12, engagement drops sharply.
+
+Twitter rewards specificity. "I reduced API costs by 40% using semantic caching" outperforms "I made my AI system more efficient". Always include the specific method, number, or insight.
+
+Blog Post Structure:
+High-performing blog posts follow the AIDA framework: Attention (hook headline), Interest (problem statement), Desire (solution + proof), Action (clear next step). The headline is the most important element — spend 20% of writing time on it.
+
+SEO-optimized blog posts target one primary keyword and 3-5 related keywords. The primary keyword should appear in the title, first paragraph, one H2 heading, and naturally throughout the text. Optimal blog post length for SEO in 2024 is 1,500-2,500 words for informational content.
+
+Use the inverted pyramid structure: most important information first, supporting details after. This serves both readers who skim and search engines that weight early content more heavily. Include a TL;DR summary at the top for scanners.
+
+Subheadings every 300-400 words improve readability and SEO. Each subheading should be descriptive and keyword-rich. Images, code blocks, and examples break up text and increase time-on-page, a key ranking signal.
+
+Engagement Optimization Across Platforms:
+The single most important engagement driver is specificity. Vague claims ("AI improves productivity") generate no engagement. Specific claims with proof ("Our AI content pipeline reduced writing time from 4 hours to 12 minutes across 50 content pieces") generate shares, saves, and comments.
+
+Social proof, numbers, and real examples consistently outperform theoretical explanations. "Here's exactly how we did X" outperforms "Here's how you could do X". First-person experience posts outperform second-person advice posts.
+
+Posting consistency matters more than posting frequency. One high-quality post per week outperforms five mediocre daily posts on LinkedIn. On Twitter, daily posting is rewarded by the algorithm, but quality should not be sacrificed.

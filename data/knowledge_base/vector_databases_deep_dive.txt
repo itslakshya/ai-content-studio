@@ -1,0 +1,16 @@
+Title: Vector Databases: Architecture, Indexing, and Production Deployment
+Source: AI Content Studio Knowledge Base
+
+Vector databases are specialized systems designed for storing and querying high-dimensional vectors (embeddings). Unlike traditional databases that match on exact values, vector databases find "similar" items using distance metrics like cosine similarity, Euclidean distance, or inner product. This enables semantic search — finding documents by meaning rather than keywords.
+
+FAISS (Facebook AI Similarity Search) is the most widely used vector search library. It supports multiple index types for different use cases. IndexFlatIP performs exact nearest-neighbor search using inner product — the most accurate but O(n) per query. IndexIVFFlat uses inverted file indexing to partition the vector space into clusters, searching only nearby clusters — 10-100x faster than flat search with minimal accuracy loss. IndexHNSW uses a graph-based approach (Hierarchical Navigable Small World) that offers the best speed-accuracy tradeoff for most datasets.
+
+Cosine similarity is the standard distance metric for text embeddings. When vectors are L2-normalized (unit length), cosine similarity equals the inner product, which FAISS computes natively. A cosine similarity of 1.0 means identical direction (semantically identical), 0.0 means orthogonal (unrelated), and -1.0 means opposite (semantically opposite). In practice, similarity scores above 0.7 indicate strong semantic match for text embeddings.
+
+Embedding dimension affects quality and performance. Common dimensions are 384 (MiniLM), 768 (BERT-base), 1024 (instructor-xl), 1536 (text-embedding-ada-002), and 3072 (text-embedding-3-large). Higher dimensions capture more semantic nuance but require more memory and slower search. For most applications, 384-768 dimensions provide the best tradeoff. At 384 dimensions, 1 million vectors require approximately 1.5 GB of memory.
+
+The vector database market is growing at 377% year-over-year according to DB-Engines rankings. Leading solutions include Pinecone (fully managed, easiest to use), Weaviate (open-source, supports hybrid search), Chroma (lightweight, Python-native), Qdrant (Rust-based, high performance), and Milvus (distributed, enterprise-scale). FAISS remains the most popular library for building custom vector search, used by companies including Meta, Google, and Spotify.
+
+Production deployment considerations for vector databases include: index persistence (rebuilding indices on restart wastes time — persist to disk), memory management (FAISS indices live in RAM by default — memory-map for large indices), batch operations (adding vectors one at a time is 10-100x slower than batch insertion), and index maintenance (as vectors are added and removed, index quality degrades — periodic rebuilding maintains search quality).
+
+Retrieval quality metrics for vector search include Recall@k (what fraction of relevant documents appear in the top k results), MRR (Mean Reciprocal Rank — how high the first relevant result appears), and NDCG (Normalized Discounted Cumulative Gain — measures the ranking quality considering that higher positions matter more). For RAG applications, Recall@5 is typically the most important metric — if the relevant chunk isn't in the top 5 results, the LLM won't have the information it needs.

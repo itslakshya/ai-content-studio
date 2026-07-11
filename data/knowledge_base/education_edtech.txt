@@ -1,0 +1,14 @@
+Title: Education Technology, Online Learning, and the Future of Skills
+Source: AI Content Studio Knowledge Base
+
+The global EdTech market reached $340 billion in 2024, driven by post-pandemic adoption of digital learning tools. Online learning platforms like Coursera (124 million learners), Udemy (64 million), and Khan Academy (150 million) have made education accessible at unprecedented scale. India is the second-largest EdTech market globally with companies like BYJU'S, Unacademy, PhysicsWallah, and upGrad collectively serving over 300 million learners.
+
+AI is transforming education through personalized learning paths, automated assessment, and intelligent tutoring systems. Carnegie Learning's MATHia and Duolingo's AI algorithms adapt difficulty in real-time based on student performance. Studies show AI-personalized learning improves test scores by 20-30% compared to one-size-fits-all instruction. GPT-powered tutoring tools like Khanmigo (Khan Academy's AI tutor) provide explanations tailored to individual student's level of understanding.
+
+The skills gap in technology is widening. The World Economic Forum estimates that 44% of workers' core skills will change by 2027. The most in-demand skills include AI/ML engineering, cloud architecture, cybersecurity, data engineering, and prompt engineering. Micro-credentials and industry certifications (AWS, Google Cloud, Microsoft Azure) are increasingly valued alongside traditional degrees. Coding bootcamps have an average 80% job placement rate within 6 months of graduation.
+
+India's National Education Policy (NEP) 2020 represents a fundamental reform of the education system. Key changes include: multidisciplinary education (breaking rigid stream separation), emphasis on coding and AI from Class 6, mother-tongue instruction in early years, and a credit-bank system for flexible degree completion. The policy aims to increase India's gross enrollment ratio in higher education from 27% to 50% by 2035.
+
+Corporate learning and development (L&D) budgets reached $403 billion globally in 2024. Companies are shifting from periodic training events to continuous learning cultures. LinkedIn Learning, Pluralsight, and Skillsoft provide AI-curated learning paths for employees. The average employee spends 57 minutes per week on learning, with organizations that invest in L&D reporting 24% higher profit margins than those that don't.
+
+The debate around AI in education centers on equity and academic integrity. While AI tools can democratize access to quality education, they also risk widening the digital divide — students without access to AI tools are disadvantaged. Universities globally are revising academic integrity policies: some ban AI tools entirely, while progressive institutions teach AI literacy and require students to document their AI usage as part of the learning process.

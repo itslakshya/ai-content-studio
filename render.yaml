@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Render.com Blueprint — deploys the Dockerfile as a single web service.
+# Free tier: 750 instance-hours/month (enough for one always-on container).
+# No persistent disk on free tier — see start.sh comments for the tradeoff.
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  - type: web
+    name: ai-content-studio
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: MASTER_API_KEY
+        sync: false          # set manually in Render dashboard (secret)
+      - key: GROQ_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: DEVTO_API_KEY
+        sync: false
+      - key: BLUESKY_HANDLE
+        sync: false
+      - key: BLUESKY_APP_PASSWORD
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHANNEL_ID
+        sync: false
+      - key: PEXELS_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: ALLOWED_ORIGINS
+        value: "*"            # tighten to your Render URL after first deploy

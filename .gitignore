@@ -1,0 +1,21 @@
+# Secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+frontend/.streamlit/secrets.toml
+
+# Runtime data
+data/content_studio.db
+data/faissdb/
+data/generated_images/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.DS_Store
+Thumbs.db

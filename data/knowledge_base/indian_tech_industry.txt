@@ -1,0 +1,14 @@
+Title: India's Technology Industry: AI, Fintech, and Digital Transformation
+Source: AI Content Studio Knowledge Base
+
+India's artificial intelligence market is projected to reach $6 billion by 2025, growing at approximately 25-30% annually. The adoption is led by financial services (fraud detection, credit scoring), healthcare (diagnostic imaging, drug discovery), and e-commerce (recommendation engines, demand forecasting). India has the third-largest AI talent pool globally, after the United States and China, with approximately 420,000 AI professionals.
+
+The UPI (Unified Payments Interface) revolution represents India's most significant fintech achievement. Processing over 10 billion transactions per month with a total value exceeding $200 billion, UPI has made India the world leader in real-time digital payments. Companies like PhonePe, Google Pay, and Paytm built their businesses on UPI infrastructure. The success of UPI has inspired similar systems globally, with India exporting the technology to countries including Singapore, UAE, and France.
+
+India's IT services industry generated approximately $245 billion in revenue in FY2024, employing over 5.4 million professionals. TCS, Infosys, Wipro, and HCL Technologies remain the largest employers, but a new generation of AI-native companies is emerging. Companies like Fractal Analytics, SigTuple, and Mad Street Den are building AI products rather than traditional IT services, signaling a shift from services to products in the Indian tech ecosystem.
+
+The Indian startup ecosystem is the world's third-largest with over 100,000 registered startups. In the AI space, notable Indian startups include Zepto (instant delivery powered by demand prediction AI), Razorpay (AI-driven payment processing and fraud detection), and Krutrim (India's first AI unicorn, building large language models for Indian languages). The government's Digital India initiative has invested over $1 billion in AI research and infrastructure.
+
+Healthcare AI in India is solving problems unique to the developing world. With a doctor-to-patient ratio of 1:1,456 (WHO recommends 1:1,000), AI-powered diagnostic tools are filling critical gaps. Companies like Niramai use AI for breast cancer screening in remote areas, while Practo uses AI for telemedicine triage. The Indian government's ABDM (Ayushman Bharat Digital Mission) is creating a national health data infrastructure that will enable AI applications at population scale.
+
+India's position in the global AI supply chain is unique: it is both a major consumer and producer of AI technology. While Indian enterprises increasingly adopt AI tools (83% of large companies have active AI projects), Indian engineers also contribute significantly to global AI development — approximately 16% of all AI research papers published globally have at least one Indian co-author.
