@@ -165,9 +165,20 @@ def _get_api_key() -> str:
 
 
 def _get_backend_url() -> str:
-    """Read backend URL from secrets/env/.env, configurable per environment."""
+    """
+    Read backend URL. Priority:
+    1. BACKEND_URL environment variable (set by start.sh or Docker env)
+    2. st.secrets (HF Spaces / secrets.toml)
+    3. .env file (local dev)
+    4. Default: localhost:8000 (single-container deploy, always correct)
+    """
     import os
     from pathlib import Path
+
+    # Check env var FIRST — start.sh exports this before Streamlit starts
+    val = os.environ.get("BACKEND_URL", "")
+    if val:
+        return val
 
     try:
         val = st.secrets.get("BACKEND_URL", "")
@@ -176,11 +187,7 @@ def _get_backend_url() -> str:
     except Exception:
         pass
 
-    val = os.environ.get("BACKEND_URL", "")
-    if val:
-        return val
-
-    # Read from .env file
+    # Read from .env file (local dev)
     for env_path in [
         Path(__file__).parent.parent / ".env",
         Path(".env"),
@@ -191,9 +198,10 @@ def _get_backend_url() -> str:
                 line = line.strip()
                 if line.startswith("BACKEND_URL=") and not line.startswith("#"):
                     val = line.split("=", 1)[1].strip().strip('"').strip("'")
-                    if val:
+                    if val and "localhost" not in val:
                         return val
 
+    # Default: FastAPI runs on 8000 in the same container
     return "http://localhost:8000"
 
 
