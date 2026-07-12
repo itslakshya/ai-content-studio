@@ -177,6 +177,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+@app.get("/", include_in_schema=False)
+async def root():
+    """Root URL — confirms the API is running."""
+    return {
+        "app": "AI Content Studio",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
 # CORS — restrict to configured origins.
 # In .env: ALLOWED_ORIGINS=https://myapp.hf.space,http://localhost:8501
 # Never use ["*"] in production — it allows any website to call your API.
