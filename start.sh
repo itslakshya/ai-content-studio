@@ -5,11 +5,6 @@ echo "=============================================="
 echo "  AI Content Studio — Starting..."
 echo "=============================================="
 
-# Debug
-echo "PORT=$PORT"
-echo "ENVIRONMENT=${ENVIRONMENT:-not set}"
-env | grep -E "^(GROQ|TAVILY|MASTER|DEVTO|BLUESKY|TELEGRAM|PEXELS|ENVIRONMENT|GROQ_MODEL)=" | cut -d= -f1 | sort
-
 # Data paths
 export FAISS_DB_PATH=${FAISS_DB_PATH:-./data/faissdb}
 export KNOWLEDGE_BASE_PATH=${KNOWLEDGE_BASE_PATH:-./data/knowledge_base}
@@ -18,27 +13,31 @@ export BACKEND_URL="http://localhost:8000"
 
 mkdir -p data/faissdb data/knowledge_base
 
-# Start FastAPI (background)
-echo "Starting FastAPI on port 8000..."
-python -m uvicorn backend.main:app \
-    --host 0.0.0.0 --port 8000 --workers 1 --log-level info &
-
-# Wait for backend (up to 3 minutes for first-time model download)
-echo "Waiting for backend..."
-for i in $(seq 1 90); do
-    if curl -sf http://localhost:8000/ > /dev/null 2>&1; then
-        echo "Backend ready!"
-        break
-    fi
-    if [ $((i % 10)) -eq 0 ]; then echo "  Still waiting... ($i/90)"; fi
-    sleep 2
-done
-
-# Start Streamlit (foreground, Render's $PORT)
+# ── Start Streamlit FIRST so Render sees a port immediately ─────────────────
+# Render's port scanner times out after ~5 minutes. If FastAPI (which needs
+# to download the embedding model ~30MB on first boot) starts first, the model
+# download blocks everything and Render kills the container before Streamlit
+# ever binds to $PORT. Starting Streamlit first means Render sees the port
+# within seconds, marks the deploy as healthy, and FastAPI can take its time
+# loading the model in the background.
 PORT=${PORT:-8501}
-echo "Starting Streamlit on port $PORT..."
-exec streamlit run frontend/app.py \
+echo "Starting Streamlit on port $PORT (Render needs this ASAP)..."
+streamlit run frontend/app.py \
     --server.port "$PORT" \
     --server.address 0.0.0.0 \
     --server.headless true \
-    --browser.gatherUsageStats false
+    --browser.gatherUsageStats false &
+
+STREAMLIT_PID=$!
+echo "Streamlit PID: $STREAMLIT_PID (port $PORT bound)"
+
+# Give Streamlit 3 seconds to bind the port
+sleep 3
+
+# ── Start FastAPI backend (takes longer — model download on first boot) ─────
+echo "Starting FastAPI on port 8000 (model download may take 1-2 min)..."
+exec python -m uvicorn backend.main:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --workers 1 \
+    --log-level info
