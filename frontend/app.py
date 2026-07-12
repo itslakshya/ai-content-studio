@@ -227,19 +227,43 @@ if not st.session_state.get("api_key"):
 if not st.session_state.get("backend_url"):
     st.session_state["backend_url"] = _get_backend_url()
 
-# ── Backend status ────────────────────────────────────────────────────────────
-backend_data = {}
-backend_ok   = False
-try:
-    r = requests.get(
-        f"{st.session_state.backend_url}/health",
-        timeout=2
-    )
-    if r.status_code == 200:
-        backend_data = r.json()
-        backend_ok   = True
-except Exception:
-    pass
+# ── Backend status (cached — recheck every 30s, not every rerun) ──────────────
+# Streamlit reruns on EVERY interaction (click, type, navigate). Checking
+# /health on every rerun causes the sidebar to flicker Online/Offline on
+# slow networks (like Render free tier). Caching for 30s fixes this.
+import time as _time
+
+def _check_backend_health():
+    """Check backend health, cached for 30 seconds."""
+    cache_key = "_backend_health_cache"
+    cache_ts  = "_backend_health_ts"
+    now = _time.time()
+
+    # Return cached result if fresh (less than 30 seconds old)
+    if cache_key in st.session_state and cache_ts in st.session_state:
+        if now - st.session_state[cache_ts] < 30:
+            return st.session_state[cache_key]
+
+    # Fresh check
+    result = {"ok": False, "data": {}}
+    try:
+        r = requests.get(
+            f"{st.session_state.backend_url}/health",
+            headers={"X-API-Key": st.session_state.get("api_key", "")},
+            timeout=10,   # 10s timeout — Render free tier can be slow
+        )
+        if r.status_code == 200:
+            result = {"ok": True, "data": r.json()}
+    except Exception:
+        pass
+
+    st.session_state[cache_key] = result
+    st.session_state[cache_ts]  = now
+    return result
+
+_health = _check_backend_health()
+backend_ok   = _health["ok"]
+backend_data = _health["data"]
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -333,25 +357,11 @@ with st.sidebar:
         _masked = (_k[:4] + "…" + _k[-4:]) if len(_k) > 10 else (_k[:2] + "…")
         st.caption(f"🔑 Key: `{_masked}` ({len(_k)} chars)")
 
-    # Session status badge — shows real current status, not a stale snapshot.
-    # If backend is reachable, fetch the live session status.
+    # Session status badge — uses cached status, no extra API calls
     _lr = st.session_state.get("last_result")
-    _sid = st.session_state.get("last_session_id")
     if _lr and isinstance(_lr, dict):
         topic_short = _lr.get("topic", "")[:28]
-        # Try to get LIVE status from backend (it may have changed since generation)
-        _live_status = _lr.get("hitl_status", "pending")
-        if _sid and backend_ok:
-            try:
-                _sr = requests.get(
-                    f"{st.session_state.backend_url}/review/{_sid}",
-                    headers={"X-API-Key": st.session_state.get("api_key","")},
-                    timeout=2)
-                if _sr.status_code == 200:
-                    _live_status = _sr.json().get("status", _live_status)
-            except Exception:
-                pass
-        # Pick color/icon based on LIVE status
+        _status = _lr.get("hitl_status", "pending")
         _badge_map = {
             "pending":  ("⏳", "Pending review",  "#16102a", "#3d2a6e", "#a78bfa"),
             "approved": ("✅", "Approved",         "#0f2a1a", "#166534", "#4ade80"),
@@ -359,7 +369,7 @@ with st.sidebar:
             "rejected": ("❌", "Rejected",         "#2a0f0f", "#7f1d1d", "#f87171"),
         }
         _icon, _label, _bg, _border, _color = _badge_map.get(
-            _live_status, ("⏳", _live_status, "#16102a", "#3d2a6e", "#a78bfa"))
+            _status, ("⏳", _status, "#16102a", "#3d2a6e", "#a78bfa"))
         st.divider()
         st.markdown(
             f"<div style='padding:8px 10px;background:{_bg};"
