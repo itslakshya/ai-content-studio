@@ -1,0 +1,4 @@
+# Frontend needs ONLY these — no langchain, no faiss, no fastembed.
+# That's the whole point of splitting: ~200MB instead of ~540MB.
+streamlit>=1.40.1
+requests>=2.32.3

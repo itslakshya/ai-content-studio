@@ -1,0 +1,28 @@
+# ═══════════════════════════════════════════════════════════════════════
+# BACKEND SERVICE — FastAPI + LangGraph + RAG
+# Runs alone in its own 512MB container (no Streamlit competing for RAM).
+# Budget: ~340MB peak. Comfortable headroom.
+# ═══════════════════════════════════════════════════════════════════════
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential curl && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -u 1000 user
+WORKDIR /home/user/app
+
+COPY requirements-backend.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-backend.txt
+
+COPY backend/ ./backend/
+COPY data/knowledge_base/ ./data/knowledge_base/
+
+RUN mkdir -p data/faissdb && chown -R user:user /home/user/app
+USER user
+
+ENV OMP_NUM_THREADS=1
+ENV TOKENIZERS_PARALLELISM=false
+
+# Render injects $PORT — bind to it directly (this IS the public service now)
+CMD python -m uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1

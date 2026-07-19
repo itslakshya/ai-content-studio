@@ -1,19 +1,29 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Render.com Blueprint — deploys the Dockerfile as a single web service.
-# Free tier: 750 instance-hours/month (enough for one always-on container).
-# No persistent disk on free tier — see start.sh comments for the tradeoff.
-# ─────────────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════
+# TWO SEPARATE SERVICES — each gets its own full 512MB.
+#
+# Why: a single container running Streamlit (~200MB) AND FastAPI with two
+# ONNX models (~340MB) peaks around 540MB, which exceeds Render's 512MB
+# free-tier limit. The OOM killer then kills the background process.
+# Splitting them means neither ever competes for RAM.
+# ═══════════════════════════════════════════════════════════════════════════
 services:
+
+  # ── BACKEND: FastAPI + LangGraph + RAG ──────────────────────────────────
   - type: web
-    name: ai-content-studio
+    name: ai-content-studio-api
     runtime: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./Dockerfile.backend
     plan: free
+    healthCheckPath: /health
     envVars:
       - key: ENVIRONMENT
         value: production
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: ALLOWED_ORIGINS
+        value: "*"
       - key: MASTER_API_KEY
-        sync: false          # set manually in Render dashboard (secret)
+        sync: false
       - key: GROQ_API_KEY
         sync: false
       - key: TAVILY_API_KEY
@@ -30,7 +40,22 @@ services:
         sync: false
       - key: PEXELS_API_KEY
         sync: false
-      - key: GROQ_MODEL
-        value: llama-3.3-70b-versatile
-      - key: ALLOWED_ORIGINS
-        value: "*"            # tighten to your Render URL after first deploy
+
+  # ── FRONTEND: Streamlit only ────────────────────────────────────────────
+  - type: web
+    name: ai-content-studio
+    runtime: docker
+    dockerfilePath: ./Dockerfile.frontend
+    plan: free
+    envVars:
+      # Render fills this in automatically with the backend's public URL
+      # Render injects the backend's hostname (e.g. "xxx.onrender.com").
+      # The frontend prepends https:// automatically if the scheme is absent.
+      - key: BACKEND_URL
+        fromService:
+          name: ai-content-studio-api
+          type: web
+          property: host
+      # Must match the backend's MASTER_API_KEY exactly
+      - key: MASTER_API_KEY
+        sync: false

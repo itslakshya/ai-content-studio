@@ -1,0 +1,27 @@
+# ═══════════════════════════════════════════════════════════════════════
+# FRONTEND SERVICE — Streamlit only
+# Runs alone in its own 512MB container. Budget: ~220MB peak.
+# Talks to the backend service over HTTPS via the BACKEND_URL env var.
+# ═══════════════════════════════════════════════════════════════════════
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -u 1000 user
+WORKDIR /home/user/app
+
+COPY requirements-frontend.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-frontend.txt
+
+COPY frontend/ ./frontend/
+
+RUN chown -R user:user /home/user/app
+USER user
+
+CMD streamlit run frontend/app.py \
+    --server.port ${PORT:-8501} \
+    --server.address 0.0.0.0 \
+    --server.headless true \
+    --browser.gatherUsageStats false

@@ -164,6 +164,25 @@ def _get_api_key() -> str:
     return ""
 
 
+def _normalize_url(url: str) -> str:
+    """
+    Accept either a full URL or a bare hostname and return a valid URL.
+
+    Render's `fromService ... property: host` injects a bare hostname like
+    "ai-content-studio-api.onrender.com" with no scheme. requests would
+    reject that, so we prepend https:// when the scheme is missing.
+    Localhost gets http:// since there's no TLS inside a container.
+    """
+    url = (url or "").strip().rstrip("/")
+    if not url:
+        return ""
+    if url.startswith(("http://", "https://")):
+        return url
+    if url.startswith(("localhost", "127.0.0.1")):
+        return f"http://{url}"
+    return f"https://{url}"
+
+
 def _get_backend_url() -> str:
     """
     Read backend URL. Priority:
@@ -175,15 +194,16 @@ def _get_backend_url() -> str:
     import os
     from pathlib import Path
 
-    # Check env var FIRST — start.sh exports this before Streamlit starts
+    # Check env var FIRST — set by start.sh (single container) or by
+    # Render's fromService (split services, gives a bare hostname).
     val = os.environ.get("BACKEND_URL", "")
     if val:
-        return val
+        return _normalize_url(val)
 
     try:
         val = st.secrets.get("BACKEND_URL", "")
         if val:
-            return val
+            return _normalize_url(val)
     except Exception:
         pass
 
