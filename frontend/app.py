@@ -330,12 +330,37 @@ with st.sidebar:
         if ready:
             st.caption(f"Publishers: {', '.join(ready)}")
     else:
-        st.markdown(
-            "<span style='font-size:0.72rem;font-weight:600;"
-            "color:#f87171'>● Offline</span>",
-            unsafe_allow_html=True,
-        )
-        st.caption("Start: `uvicorn backend.main:app --port 8000`")
+        # Distinguish "backend still booting" (normal, ~60s after deploy)
+        # from "backend genuinely down". We track when the app first loaded;
+        # within the first 2 minutes, a missing backend is almost certainly
+        # just the embedding model still downloading — not an error.
+        if "_app_first_load_ts" not in st.session_state:
+            st.session_state["_app_first_load_ts"] = _time.time()
+        _uptime = _time.time() - st.session_state["_app_first_load_ts"]
+
+        if _uptime < 120:
+            st.markdown(
+                "<span style='font-size:0.72rem;font-weight:600;"
+                "color:#fbbf24'>● Starting up…</span>",
+                unsafe_allow_html=True,
+            )
+            st.caption("Backend is loading the embedding model (~60s on first boot).")
+            st.caption("This is normal after a deploy. Refresh in a moment.")
+        else:
+            st.markdown(
+                "<span style='font-size:0.72rem;font-weight:600;"
+                "color:#f87171'>● Offline</span>",
+                unsafe_allow_html=True,
+            )
+            st.caption("Backend unreachable. If running locally, start it with:")
+            st.caption("`uvicorn backend.main:app --port 8000`")
+
+        if st.button("↻ Retry connection", use_container_width=True,
+                     key="retry_backend_conn"):
+            # Clear the 30s health cache so the next check is immediate
+            st.session_state.pop("_backend_health_cache", None)
+            st.session_state.pop("_backend_health_ts", None)
+            st.rerun()
 
     # Visible diagnostic — always show a MASKED preview of the resolved key
     # so it's possible to confirm (without exposing the full secret) whether
