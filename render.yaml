@@ -1,11 +1,4 @@
-# ═══════════════════════════════════════════════════════════════════════════
-# TWO SEPARATE SERVICES — each gets its own full 512MB.
-#
-# Why: a single container running Streamlit (~200MB) AND FastAPI with two
-# ONNX models (~340MB) peaks around 540MB, which exceeds Render's 512MB
-# free-tier limit. The OOM killer then kills the background process.
-# Splitting them means neither ever competes for RAM.
-# ═══════════════════════════════════════════════════════════════════════════
+
 services:
 
   # ── BACKEND: FastAPI + LangGraph + RAG ──────────────────────────────────
@@ -49,13 +42,14 @@ services:
     plan: free
     envVars:
       # Render fills this in automatically with the backend's public URL
-      # Render injects the backend's hostname (e.g. "xxx.onrender.com").
-      # The frontend prepends https:// automatically if the scheme is absent.
+      # Set manually in the dashboard to the backend's PUBLIC URL, e.g.
+      # https://ai-content-studio-api.onrender.com
+      # (fromService's "host" property returns an internal address that
+      # doesn't reliably resolve on the free tier — a manual public URL
+      # is simpler and guaranteed to work, since it's the same URL that
+      # already answers /health successfully.)
       - key: BACKEND_URL
-        fromService:
-          name: ai-content-studio-api
-          type: web
-          property: host
+        sync: false
       # Must match the backend's MASTER_API_KEY exactly
       - key: MASTER_API_KEY
         sync: false
