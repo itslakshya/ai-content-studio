@@ -159,6 +159,25 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"⚠️  Vector store init failed: {e}")
 
+    # ── Warm up FlashRank reranker at BOOT, not on first request ──────────────
+    # FlashRank lazy-loads its cross-encoder model (~21.6MB download) on the
+    # first retrieval call. On a memory-constrained container, doing this
+    # download+load WHILE a request is also running the LLM research call
+    # can push peak memory over the limit and get the process killed mid-
+    # request (visible as a 502 to the user, with "Started server process"
+    # appearing in logs — that's the container restarting under the
+    # crashed request). Loading it here, at startup, before any traffic
+    # arrives, means the memory spike happens once, in isolation, and any
+    # failure is caught cleanly instead of surfacing as a broken user request.
+    print("🔄 Warming up FlashRank reranker...")
+    try:
+        from rag.retriever import get_retriever
+        retriever = get_retriever()
+        retriever._get_ranker()  # triggers the lazy download+load now
+        print("✅ FlashRank reranker warm")
+    except Exception as e:
+        print(f"⚠️  FlashRank warmup failed (will lazy-load on first use): {e}")
+
     settings = get_settings()
     print(f"\n✅ Server ready on {settings.backend_url}")
     print(f"   Model : {settings.groq_model}")
