@@ -1,4 +1,11 @@
-
+# ═══════════════════════════════════════════════════════════════════════════
+# TWO SEPARATE SERVICES — each gets its own full 512MB.
+#
+# Why: a single container running Streamlit (~200MB) AND FastAPI with two
+# ONNX models (~340MB) peaks around 540MB, which exceeds Render's 512MB
+# free-tier limit. The OOM killer then kills the background process.
+# Splitting them means neither ever competes for RAM.
+# ═══════════════════════════════════════════════════════════════════════════
 services:
 
   # ── BACKEND: FastAPI + LangGraph + RAG ──────────────────────────────────
@@ -12,7 +19,7 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: GROQ_MODEL
-        value: llama-3.3-70b-versatile
+        value: openai/gpt-oss-120b
       - key: ALLOWED_ORIGINS
         value: "*"
       - key: MASTER_API_KEY

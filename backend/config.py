@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # ── LLM ──────────────────────────────────────────────────────────────────
     groq_api_key: str = Field(default="")
-    groq_model: str   = Field(default="llama-3.3-70b-versatile")
+    groq_model: str   = Field(default="openai/gpt-oss-120b")  # llama-3.3-70b-versatile moved to Enterprise-only tier
 
     # ── Web Search ───────────────────────────────────────────────────────────
     tavily_api_key: str = Field(default="")
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     # ── Agents ───────────────────────────────────────────────────────────────
     max_retries:        int   = Field(default=3)
     critique_threshold: float = Field(default=0.75)
-    max_search_results: int   = Field(default=5)
+    max_search_results: int   = Field(default=3)  # was 5 — trimmed for low-memory hosting
 
     # ── Cache ────────────────────────────────────────────────────────────────
     cache_similarity_threshold: float = Field(default=0.92)
